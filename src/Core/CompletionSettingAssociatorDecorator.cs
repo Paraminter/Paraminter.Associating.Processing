@@ -8,29 +8,25 @@ using Paraminter.Processing.Commands;
 
 using System;
 
-/// <summary>Decorates an associator by setting the initiation status beforehand, and the completion status afterwards.</summary>
+/// <summary>Decorates an associator by setting the completion status after invoking the decoratee.</summary>
 /// <typeparam name="TData">The type representing the data used to associate arguments with parameters.</typeparam>
-public sealed class ProcessingAssociatorDecorator<TData>
+public sealed class CompletionSettingAssociatorDecorator<TData>
     : ICommandHandler<IAssociateArgumentsCommand<TData>>
     where TData : IAssociateArgumentsData
 {
     private readonly ICommandHandler<IAssociateArgumentsCommand<TData>> Decoratee;
 
-    private readonly ICommandHandler<ISetProcessInitiationCommand> InitiationSetter;
     private readonly ICommandHandler<ISetProcessCompletionCommand> CompletionSetter;
 
-    /// <summary>Instantiates a decorator of an associator, which sets the initiation status beforehand and the completion status afterwards.</summary>
+    /// <summary>Instantiates a decorator of an associator, which sets the completion status after invoking the decoratee.</summary>
     /// <param name="decoratee">The decorated associator.</param>
-    /// <param name="initiationSetter">Sets the initiation status.</param>
     /// <param name="completionSetter">Sets the completion status.</param>
-    public ProcessingAssociatorDecorator(
+    public CompletionSettingAssociatorDecorator(
         ICommandHandler<IAssociateArgumentsCommand<TData>> decoratee,
-        ICommandHandler<ISetProcessInitiationCommand> initiationSetter,
         ICommandHandler<ISetProcessCompletionCommand> completionSetter)
     {
         Decoratee = decoratee ?? throw new ArgumentNullException(nameof(decoratee));
 
-        InitiationSetter = initiationSetter ?? throw new ArgumentNullException(nameof(initiationSetter));
         CompletionSetter = completionSetter ?? throw new ArgumentNullException(nameof(completionSetter));
     }
 
@@ -41,8 +37,6 @@ public sealed class ProcessingAssociatorDecorator<TData>
         {
             throw new ArgumentNullException(nameof(command));
         }
-
-        InitiationSetter.Handle(SetProcessInitiationCommand.Instance);
 
         Decoratee.Handle(command);
 

@@ -14,6 +14,5 @@ internal interface IFixture<TData>
 
     public abstract Mock<ICommandHandler<IAssociateArgumentsCommand<TData>>> DecorateeMock { get; }
 
-    public abstract Mock<ICommandHandler<ISetProcessInitiationCommand>> InitiationSetterMock { get; }
-    public abstract Mock<ICommandHandler<ISetProcessCompletionCommand>> CompletionSetterMock { get; }
+    public abstract Mock<ICommandHandler<IResetProcessInitiationCommand>> InitiationResetterMock { get; }
 }
