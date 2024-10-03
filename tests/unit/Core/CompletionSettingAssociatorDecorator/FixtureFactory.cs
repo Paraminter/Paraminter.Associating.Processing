@@ -14,12 +14,11 @@ internal static class FixtureFactory
     {
         Mock<ICommandHandler<IAssociateArgumentsCommand<TData>>> decorateeMock = new(MockBehavior.Strict);
 
-        Mock<ICommandHandler<ISetProcessInitiationCommand>> initiationSetterMock = new(MockBehavior.Strict);
         Mock<ICommandHandler<ISetProcessCompletionCommand>> completionSetterMock = new(MockBehavior.Strict);
 
-        var sut = new ProcessingAssociatorDecorator<TData>(decorateeMock.Object, initiationSetterMock.Object, completionSetterMock.Object);
+        var sut = new CompletionSettingAssociatorDecorator<TData>(decorateeMock.Object, completionSetterMock.Object);
 
-        return new Fixture<TData>(sut, decorateeMock, initiationSetterMock, completionSetterMock);
+        return new Fixture<TData>(sut, decorateeMock, completionSetterMock);
     }
 
     private sealed class Fixture<TData>
@@ -30,20 +29,17 @@ internal static class FixtureFactory
 
         private readonly Mock<ICommandHandler<IAssociateArgumentsCommand<TData>>> DecorateeMock;
 
-        private readonly Mock<ICommandHandler<ISetProcessInitiationCommand>> InitiationSetterMock;
         private readonly Mock<ICommandHandler<ISetProcessCompletionCommand>> CompletionSetterMock;
 
         public Fixture(
             ICommandHandler<IAssociateArgumentsCommand<TData>> sut,
             Mock<ICommandHandler<IAssociateArgumentsCommand<TData>>> decorateeMock,
-            Mock<ICommandHandler<ISetProcessInitiationCommand>> initiationSetterMock,
             Mock<ICommandHandler<ISetProcessCompletionCommand>> completionSetterMock)
         {
             Sut = sut;
 
             DecorateeMock = decorateeMock;
 
-            InitiationSetterMock = initiationSetterMock;
             CompletionSetterMock = completionSetterMock;
         }
 
@@ -51,7 +47,6 @@ internal static class FixtureFactory
 
         Mock<ICommandHandler<IAssociateArgumentsCommand<TData>>> IFixture<TData>.DecorateeMock => DecorateeMock;
 
-        Mock<ICommandHandler<ISetProcessInitiationCommand>> IFixture<TData>.InitiationSetterMock => InitiationSetterMock;
         Mock<ICommandHandler<ISetProcessCompletionCommand>> IFixture<TData>.CompletionSetterMock => CompletionSetterMock;
     }
 }
