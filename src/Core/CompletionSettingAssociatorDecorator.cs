@@ -7,6 +7,8 @@ using Paraminter.Cqs;
 using Paraminter.Processing.Commands;
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 /// <summary>Decorates an associator by setting the completion status after invoking the decoratee.</summary>
 /// <typeparam name="TData">The type representing the data used to associate arguments with parameters.</typeparam>
@@ -30,16 +32,17 @@ public sealed class CompletionSettingAssociatorDecorator<TData>
         CompletionSetter = completionSetter ?? throw new ArgumentNullException(nameof(completionSetter));
     }
 
-    void ICommandHandler<IAssociateArgumentsCommand<TData>>.Handle(
-        IAssociateArgumentsCommand<TData> command)
+    async Task ICommandHandler<IAssociateArgumentsCommand<TData>>.Handle(
+        IAssociateArgumentsCommand<TData> command,
+        CancellationToken cancellationToken)
     {
         if (command is null)
         {
             throw new ArgumentNullException(nameof(command));
         }
 
-        Decoratee.Handle(command);
+        await Decoratee.Handle(command, cancellationToken).ConfigureAwait(false);
 
-        CompletionSetter.Handle(SetProcessCompletionCommand.Instance);
+        await CompletionSetter.Handle(SetProcessCompletionCommand.Instance, cancellationToken).ConfigureAwait(false);
     }
 }
